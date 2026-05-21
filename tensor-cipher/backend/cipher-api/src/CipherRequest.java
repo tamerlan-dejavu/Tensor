@@ -1,5 +1,3 @@
-package com.tensorcipher.api.model;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

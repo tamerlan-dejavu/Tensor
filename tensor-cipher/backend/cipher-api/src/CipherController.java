@@ -1,8 +1,3 @@
-package com.tensorcipher.api.controller;
-
-import com.tensorcipher.api.model.CipherRequest;
-import com.tensorcipher.api.model.CipherResponse;
-import com.tensorcipher.api.model.ErrorResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +13,6 @@ public class CipherController {
 
     private static final Logger log = LoggerFactory.getLogger(CipherController.class);
 
-    // cipher-core classes are in the default package — accessed via reflection-free direct instantiation
-    // since they have no package declaration, they are loaded as default-package classes
     private final Object tensorCipher;
 
     public CipherController() {
@@ -31,9 +24,6 @@ public class CipherController {
         }
     }
 
-    /**
-     * Encrypts the provided text using the given key.
-     */
     @PostMapping("/encrypt")
     public ResponseEntity<?> encrypt(@Valid @RequestBody CipherRequest request) {
         log.debug("Encrypt request: text length={}", request.getText().length());
@@ -52,9 +42,6 @@ public class CipherController {
         }
     }
 
-    /**
-     * Decrypts the provided ciphertext using the given key.
-     */
     @PostMapping("/decrypt")
     public ResponseEntity<?> decrypt(@Valid @RequestBody CipherRequest request) {
         log.debug("Decrypt request: text length={}", request.getText().length());
@@ -73,9 +60,6 @@ public class CipherController {
         }
     }
 
-    /**
-     * Health check endpoint.
-     */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {
         log.debug("Health check");

@@ -1,5 +1,3 @@
-package com.tensorcipher.api.model;
-
 public class ErrorResponse {
 
     private String error;
