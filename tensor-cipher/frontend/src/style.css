@@ -1,0 +1,53 @@
+:root {
+  --bg:          #F0EEE6;
+  --surface:     #E8E6DC;
+  --surface-alt: #DEDAD0;
+  --text:        #2A2A2A;
+  --text-mid:    #5C5A55;
+  --text-subtle: #8E8C86;
+  --border:      #C8C5B8;
+  --border-mid:  #9A9890;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-mid); }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.tc-spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(240, 238, 230, 0.25);
+  border-top-color: #F0EEE6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.status-success { color: #2E6A44; }
+.status-error   { color: #8B3030; }
