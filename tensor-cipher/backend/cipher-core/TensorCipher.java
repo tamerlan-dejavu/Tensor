@@ -6,6 +6,22 @@ public class TensorCipher {
     private static final int BLOCK_SIZE = 64;
     private static final char PADDING_CHAR = 'X';
 
+    private int[] stringToAscii(String str) {
+        int[] result = new int[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            result[i] = str.charAt(i);
+        }
+        return result;
+    }
+
+    private String asciiToString(int[] codes) {
+        StringBuilder sb = new StringBuilder();
+        for (int code : codes) {
+            sb.append((char) code);
+        }
+        return sb.toString();
+    }
+
     public String encrypt(String plaintext, String key) {
         String upperText = plaintext.toUpperCase();
         int[] asciiCodes = stringToAscii(upperText);
@@ -41,6 +57,12 @@ public class TensorCipher {
         }
 
         return Base64.getEncoder().encodeToString(encryptedBytes);
+    }
+
+    private void applyRoundShifts(Tensor3D tensor, KeySchedule keySchedule, int round) {
+        applyAxisShifts(tensor, keySchedule, round, Axis.X);
+        applyAxisShifts(tensor, keySchedule, round, Axis.Y);
+        applyAxisShifts(tensor, keySchedule, round, Axis.Z);
     }
 
     public String decrypt(String ciphertext, String key) {
@@ -83,12 +105,6 @@ public class TensorCipher {
         return asciiToString(asciiCodes);
     }
 
-    private void applyRoundShifts(Tensor3D tensor, KeySchedule keySchedule, int round) {
-        applyAxisShifts(tensor, keySchedule, round, Axis.X);
-        applyAxisShifts(tensor, keySchedule, round, Axis.Y);
-        applyAxisShifts(tensor, keySchedule, round, Axis.Z);
-    }
-
     private void applyReverseRoundShifts(Tensor3D tensor, KeySchedule keySchedule, int round) {
         applyAxisShiftsReverse(tensor, keySchedule, round, Axis.Z);
         applyAxisShiftsReverse(tensor, keySchedule, round, Axis.Y);
@@ -116,22 +132,6 @@ public class TensorCipher {
                 case Z -> tensor.shiftLayerZ(layer, reverseShifts);
             }
         }
-    }
-
-    private int[] stringToAscii(String str) {
-        int[] result = new int[str.length()];
-        for (int i = 0; i < str.length(); i++) {
-            result[i] = str.charAt(i);
-        }
-        return result;
-    }
-
-    private String asciiToString(int[] codes) {
-        StringBuilder sb = new StringBuilder();
-        for (int code : codes) {
-            sb.append((char) code);
-        }
-        return sb.toString();
     }
 
     private int[] padToBlockSize(int[] data) {

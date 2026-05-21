@@ -39,22 +39,6 @@ public class KeySchedule {
         return shifts;
     }
 
-    public int[] getMaskFillBytes() {
-        int[] result = new int[16];
-        for (int i = 0; i < 16; i++) {
-            result[i] = hashBytes[12 + i];
-        }
-        return result;
-    }
-
-    public int[] getMaskMultipliers() {
-        int[] result = new int[4];
-        for (int i = 0; i < 4; i++) {
-            result[i] = hashBytes[28 + i];
-        }
-        return result;
-    }
-
     private int[] getIndicesForRound2(Axis axis) {
         return switch (axis) {
             case X -> new int[]{0, 1, 6, 7};
@@ -69,5 +53,21 @@ public class KeySchedule {
             case Y -> new int[]{1, 4, 7, 10};
             case Z -> new int[]{2, 5, 8, 11};
         };
+    }
+
+    public int[] getMaskFillBytes() {
+        int[] result = new int[16];
+        for (int i = 0; i < 16; i++) {
+            result[i] = hashBytes[12 + i];
+        }
+        return result;
+    }
+
+    public int[] getMaskMultipliers() {
+        int[] result = new int[4];
+        for (int i = 0; i < 4; i++) {
+            result[i] = hashBytes[28 + i];
+        }
+        return result;
     }
 }
