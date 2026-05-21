@@ -1,3 +1,5 @@
+package com.tensorcipher;
+
 public class Tensor3D {
     private static final int SIZE = 4;
     private final int[][][] data;

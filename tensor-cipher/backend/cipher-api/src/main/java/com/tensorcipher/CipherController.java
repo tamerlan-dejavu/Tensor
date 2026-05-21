@@ -1,3 +1,5 @@
+package com.tensorcipher;
+
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ public class CipherController {
 
     public CipherController() {
         try {
-            Class<?> clazz = Class.forName("TensorCipher");
+            Class<?> clazz = Class.forName("com.tensorcipher.TensorCipher");
             this.tensorCipher = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize TensorCipher", e);

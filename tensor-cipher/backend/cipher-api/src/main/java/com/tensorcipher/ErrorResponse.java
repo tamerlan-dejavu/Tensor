@@ -1,3 +1,5 @@
+package com.tensorcipher;
+
 public class ErrorResponse {
 
     private String error;
