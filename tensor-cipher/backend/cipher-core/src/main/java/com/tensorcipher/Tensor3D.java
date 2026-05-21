@@ -71,18 +71,6 @@ public class Tensor3D {
         }
     }
 
-    public Tensor3D clone() {
-        Tensor3D result = new Tensor3D();
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                for (int z = 0; z < SIZE; z++) {
-                    result.set(x, y, z, this.get(x, y, z));
-                }
-            }
-        }
-        return result;
-    }
-
     public int[] toFlatArray() {
         int[] result = new int[SIZE * SIZE * SIZE];
         int index = 0;

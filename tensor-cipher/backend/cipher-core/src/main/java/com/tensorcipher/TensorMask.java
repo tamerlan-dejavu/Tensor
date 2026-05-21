@@ -10,7 +10,7 @@ public class TensorMask {
     }
 
     public Tensor3D getMask() {
-        return mask.clone();
+        return this.mask;
     }
 
     private void generateMask() {

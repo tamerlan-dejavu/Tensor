@@ -24,6 +24,16 @@ public class TensorCipher {
         return sb.toString();
     }
 
+    private int[] padToBlockSize(int[] data) {
+        int paddingNeeded = (BLOCK_SIZE - (data.length % BLOCK_SIZE)) % BLOCK_SIZE;
+        int[] padded = new int[data.length + paddingNeeded];
+        System.arraycopy(data, 0, padded, 0, data.length);
+        for (int i = data.length; i < padded.length; i++) {
+            padded[i] = PADDING_CHAR;
+        }
+        return padded;
+    }
+
     public String encrypt(String plaintext, String key) {
         String upperText = plaintext.toUpperCase();
         int[] asciiCodes = stringToAscii(upperText);
@@ -107,6 +117,16 @@ public class TensorCipher {
         return asciiToString(asciiCodes);
     }
 
+    private int[] removePadding(int[] data) {
+        int endIndex = data.length;
+        while (endIndex > 0 && data[endIndex - 1] == PADDING_CHAR) {
+            endIndex--;
+        }
+        int[] result = new int[endIndex];
+        System.arraycopy(data, 0, result, 0, endIndex);
+        return result;
+    }
+
     private void applyReverseRoundShifts(Tensor3D tensor, KeySchedule keySchedule, int round) {
         applyAxisShiftsReverse(tensor, keySchedule, round, Axis.Z);
         applyAxisShiftsReverse(tensor, keySchedule, round, Axis.Y);
@@ -134,25 +154,5 @@ public class TensorCipher {
                 case Z -> tensor.shiftLayerZ(layer, reverseShifts);
             }
         }
-    }
-
-    private int[] padToBlockSize(int[] data) {
-        int paddingNeeded = (BLOCK_SIZE - (data.length % BLOCK_SIZE)) % BLOCK_SIZE;
-        int[] padded = new int[data.length + paddingNeeded];
-        System.arraycopy(data, 0, padded, 0, data.length);
-        for (int i = data.length; i < padded.length; i++) {
-            padded[i] = PADDING_CHAR;
-        }
-        return padded;
-    }
-
-    private int[] removePadding(int[] data) {
-        int endIndex = data.length;
-        while (endIndex > 0 && data[endIndex - 1] == PADDING_CHAR) {
-            endIndex--;
-        }
-        int[] result = new int[endIndex];
-        System.arraycopy(data, 0, result, 0, endIndex);
-        return result;
     }
 }
