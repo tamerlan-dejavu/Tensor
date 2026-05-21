@@ -45,12 +45,6 @@ export function ResultPanel({ result, processingTimeMs, error }: Props) {
       >
         {result || 'Result will appear here…'}
       </div>
-
-      {processingTimeMs !== null && result && (
-        <p className="text-xs text-gray-500 text-right">
-          ⏱ processed in {processingTimeMs} ms
-        </p>
-      )}
     </div>
   )
 }
