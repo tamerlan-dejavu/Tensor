@@ -1,8 +1,3 @@
-
-
-/**
- * Enumeration representing the three axes of a 3D tensor.
- */
 public enum Axis {
     X(0),
     Y(4),

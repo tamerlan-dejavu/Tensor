@@ -332,7 +332,7 @@
             }
             outputText.value = data.result;
             outputText.style.opacity = '1';
-            setStatus(`Done. Processed in ${data.processingTimeMs} ms.`, true);
+            setStatus(`Done.`, true);
         } catch (err) {
             setStatus('Network error: ' + err.message, false);
         } finally {

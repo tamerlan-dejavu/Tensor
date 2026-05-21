@@ -1,26 +1,11 @@
-
-
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-/**
- * Main encryption and decryption class implementing tensor-based cipher algorithm.
- * Uses a 4×4×4 tensor with key-derived shift schedules and XOR masking.
- */
 public class TensorCipher {
     private static final int BLOCK_SIZE = 64;
     private static final char PADDING_CHAR = 'X';
 
-    /**
-     * Encrypts plaintext using the tensor cipher algorithm.
-     * Process: uppercase conversion → ASCII encoding → padding → tensor transformations →
-     * shift operations (3 rounds) → XOR masking → Base64 encoding.
-     *
-     * @param plaintext the text to encrypt
-     * @param key       the encryption key
-     * @return Base64-encoded ciphertext
-     */
     public String encrypt(String plaintext, String key) {
         String upperText = plaintext.toUpperCase();
         int[] asciiCodes = stringToAscii(upperText);
@@ -58,15 +43,6 @@ public class TensorCipher {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    /**
-     * Decrypts ciphertext using the tensor cipher algorithm.
-     * Process: Base64 decoding → tensor transformations → reverse shift operations (3→1) →
-     * XOR unmasking → ASCII decoding → padding removal.
-     *
-     * @param ciphertext the Base64-encoded ciphertext
-     * @param key        the decryption key
-     * @return decrypted plaintext
-     */
     public String decrypt(String ciphertext, String key) {
         byte[] encryptedBytes = Base64.getDecoder().decode(ciphertext);
         int[] encryptedData = new int[encryptedBytes.length];
