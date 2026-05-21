@@ -1,16 +1,381 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tensor Cipher</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tensor-Cube Cipher</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:          #F0EEE6;
+            --surface:     #E8E6DC;
+            --surface-alt: #DEDAD0;
+            --text:        #2A2A2A;
+            --text-mid:    #5C5A55;
+            --text-subtle: #8E8C86;
+            --border:      #C8C5B8;
+            --border-mid:  #9A9890;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 7rem;
+        }
+
+        /* ── Header ── */
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.2rem, 6vw, 3.4rem);
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1.08;
+            margin-bottom: 1.25rem;
+        }
+
+        .desc {
+            font-size: 0.72rem;
+            color: var(--text-subtle);
+            letter-spacing: 0.06em;
+            line-height: 2.2;
+        }
+
+        .desc em { color: var(--text-mid); font-style: normal; }
+
+        /* ── Section ── */
+        .section {
+            border: 1px solid var(--border);
+            padding: 2rem;
+            background: var(--surface);
+        }
+
+        /* ── Labels ── */
+        label.field-label {
+            display: block;
+            font-size: 8.5px;
+            font-weight: 700;
+            color: var(--text-subtle);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 0.45rem;
+            user-select: none;
+        }
+
+        /* ── Inputs ── */
+        textarea, input[type="text"] {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.6rem 0.85rem;
+            font-size: 0.78rem;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: border-color 0.12s ease;
+        }
+
+        textarea { resize: vertical; }
+
+        textarea:focus, input[type="text"]:focus {
+            border-color: var(--border-mid);
+        }
+
+        textarea::placeholder, input::placeholder {
+            color: var(--text-subtle);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 8.5px;
+            color: var(--text-subtle);
+            margin-top: 0.3rem;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.25rem;
+            border-radius: 0;
+            transition: background 0.12s, color 0.12s, border-color 0.12s;
+            flex: 1;
+        }
+
+        .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+        .btn-primary {
+            background: var(--text);
+            color: var(--bg);
+            border: 1px solid var(--text);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--text-mid);
+            border-color: var(--text-mid);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border-mid);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--surface-alt);
+            border-color: var(--text-mid);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-mid);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            background: var(--surface-alt);
+            color: var(--text);
+            border-color: var(--border-mid);
+        }
+
+        /* ── Row groups ── */
+        .row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+        .field { margin-bottom: 1.25rem; }
+
+        /* ── Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 10px; height: 10px;
+            border: 1.5px solid rgba(240,238,230,0.3);
+            border-top-color: #F0EEE6;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .btn-secondary .spinner, .btn-ghost .spinner {
+            border-color: rgba(42,42,42,0.18);
+            border-top-color: var(--text);
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Status ── */
+        .status-bar {
+            text-align: center;
+            font-size: 9.5px;
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            letter-spacing: 0.06em;
+            color: var(--text-subtle);
+        }
+
+        .status-ok  { color: #2E6A44; }
+        .status-err { color: #8B3030; }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            font-size: 8.5px;
+            color: var(--text-subtle);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-mid); }
+
+        @media (max-width: 640px) {
+            .page { padding: 2rem 1rem 5rem; }
+            .section { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <header>
+        <h1>Tensor-Cube Cipher</h1>
+        <p class="desc">
+            <em>4×4×4 tensor blocks</em>
+            &nbsp;&middot;&nbsp;SHA-256 key derivation&nbsp;&middot;&nbsp;layer shifting + XOR mask
+        </p>
+    </header>
+
+    <div class="section">
+        <div class="field">
+            <label class="field-label" for="inputText">Input Text</label>
+            <textarea id="inputText" rows="4"
+                placeholder="Enter plaintext to encrypt or Base64 ciphertext to decrypt..."></textarea>
+            <div class="char-count"><span id="charCount">0</span> characters</div>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="secretKey">Secret Key</label>
+            <input id="secretKey" type="text" placeholder="Enter a secret key for encryption">
+        </div>
+
+        <div class="row" style="margin-bottom: 0.5rem;">
+            <button id="encryptBtn" class="btn btn-primary">Encrypt</button>
+            <button id="decryptBtn" class="btn btn-secondary">Decrypt</button>
+        </div>
+
+        <div class="row" style="margin-bottom: 1.25rem;">
+            <label class="btn btn-ghost" style="cursor:pointer;">
+                Load File
+                <input type="file" id="fileInput" accept=".txt" style="display:none;">
+            </label>
+            <button id="saveBtn" class="btn btn-ghost">Save Output</button>
+            <button id="copyBtn" class="btn btn-ghost">Copy</button>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="outputText">Output</label>
+            <textarea id="outputText" rows="4" readonly
+                placeholder="Result will appear here..." style="opacity:0.65;"></textarea>
+        </div>
+
+        <div class="status-bar" id="statusBar">Ready.</div>
+    </div>
+
+    <footer>Bauyrzhan Tamerlan &middot; Derevyanchenko Kirill</footer>
+</div>
+
+<script>
+    const API = 'https://tensor-xgrh.onrender.com';
+
+    const inputText  = document.getElementById('inputText');
+    const secretKey  = document.getElementById('secretKey');
+    const outputText = document.getElementById('outputText');
+    const charCount  = document.getElementById('charCount');
+    const statusBar  = document.getElementById('statusBar');
+    const encryptBtn = document.getElementById('encryptBtn');
+    const decryptBtn = document.getElementById('decryptBtn');
+    const copyBtn    = document.getElementById('copyBtn');
+    const saveBtn    = document.getElementById('saveBtn');
+    const fileInput  = document.getElementById('fileInput');
+
+    inputText.addEventListener('input', () => {
+        charCount.textContent = inputText.value.length;
+    });
+
+    function setStatus(msg, ok) {
+        statusBar.textContent = msg;
+        statusBar.className = 'status-bar ' + (ok ? 'status-ok' : 'status-err');
+    }
+
+    function setLoading(loading) {
+        [encryptBtn, decryptBtn].forEach(btn => {
+            btn.disabled = loading;
+            if (loading) {
+                if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner"></span>Working...';
+            } else {
+                btn.innerHTML = btn.dataset.orig || btn.innerHTML;
+                delete btn.dataset.orig;
+            }
+        });
+    }
+
+    async function callApi(endpoint) {
+        const text = inputText.value;
+        const key  = secretKey.value.trim();
+        if (!key) { setStatus('Secret key is required.', false); return; }
+
+        setLoading(true);
+        try {
+            const res = await fetch(`${API}/api/cipher/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setStatus(data.message || 'Operation failed.', false);
+                return;
+            }
+            outputText.value = data.result;
+            outputText.style.opacity = '1';
+            setStatus(`Done. Processed in ${data.processingTimeMs} ms.`, true);
+        } catch (err) {
+            setStatus('Network error: ' + err.message, false);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    encryptBtn.addEventListener('click', () => callApi('encrypt'));
+    decryptBtn.addEventListener('click', () => callApi('decrypt'));
+
+    copyBtn.addEventListener('click', async () => {
+        if (!outputText.value) { setStatus('Nothing to copy.', false); return; }
+        await navigator.clipboard.writeText(outputText.value);
+        setStatus('Copied to clipboard.', true);
+    });
+
+    saveBtn.addEventListener('click', () => {
+        if (!outputText.value) { setStatus('Nothing to save.', false); return; }
+        const blob = new Blob([outputText.value], { type: 'text/plain;charset=utf-8' });
+        const a = Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(blob),
+            download: 'tensor-cipher-output.txt'
+        });
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+        setStatus('Output saved.', true);
+    });
+
+    fileInput.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            inputText.value = ev.target.result;
+            charCount.textContent = inputText.value.length;
+            setStatus(`Loaded: ${file.name}`, true);
+        };
+        reader.onerror = () => setStatus('Failed to read file.', false);
+        reader.readAsText(file);
+        fileInput.value = '';
+    });
+</script>
+</body>
 </html>
